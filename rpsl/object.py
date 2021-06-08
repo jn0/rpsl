@@ -6,8 +6,12 @@ from .errors import RPSLAttributeError
 
 
 class RPSL:
-    TAG_SIZE = 16
+    ATTRIBUTE_SIZE = 16
     _PARSERS = {}
+
+    @staticmethod
+    def format_attribute(attr, attribute_size=ATTRIBUTE_SIZE):
+        return (attr + ':').ljust(attribute_size)
 
     @staticmethod
     def is_continuation(line):
@@ -17,6 +21,13 @@ class RPSL:
     def is_valid_tagline(line):
         return ':' in line and \
                not any(c.isspace() for c in line.split(':', 1)[0])
+
+    @staticmethod
+    def format_line(line):
+        if RPSL.is_valid_tagline(line):
+            attribute, value = line.split(':', 1)
+            return RPSL.format_attribute(attribute) + value.lstrip()
+        return line
 
     def __init__(self, lines: list, strict=False):
         self.strict = strict
@@ -49,6 +60,7 @@ class RPSL:
         return self.get_parser(attribute)(attribute, value.lstrip())
 
     def __str__(self):
-        return '\n'.join(self.lines)
+        return '\n'.join(map(self.format_line, self.lines))
+
 
 # vim:set ft=python ai et ts=4 sts=4 sw=4 cc=80:EOF #
