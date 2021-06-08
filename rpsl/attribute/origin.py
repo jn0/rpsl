@@ -15,5 +15,6 @@ def parse(attr, value, strict=False, messages: list = None):
         messages.append(message)
     if strict and not ok:
         raise RPSLOriginError(None, None, message)
+    return attr, value.strip().upper()
 
 # vim:set ft=python ai et ts=4 sts=4 sw=4 cc=80:EOF #

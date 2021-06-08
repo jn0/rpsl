@@ -12,8 +12,13 @@ class Error(Exception):
 
 
 class RPSLSyntaxError(Error): pass  # noqa E702
+class RPSLValidationError(Error): pass  # noqa E702
+
 class RPSLAttributeError(RPSLSyntaxError): pass  # noqa E702
 
 class RPSLOriginError(RPSLAttributeError): pass  # noqa E702
+class RPSLRouteError(RPSLAttributeError): pass  # noqa E702
+
+class RPSLInvalidRouteError(RPSLValidationError): pass  # noqa E702
 
 # vim:set ft=python ai et ts=4 sts=4 sw=4 cc=80:EOF #

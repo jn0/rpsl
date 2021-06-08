@@ -3,10 +3,10 @@
 '''
 import logging; log = logging.getLogger(__name__)  # noqa E702
 from .object import RPSL
-from .errors import RPSLSyntaxError
+from .errors import Error, RPSLSyntaxError
 
 
-def parse(stream):
+def parse(stream, exceptions=True):
     '''
     `stream` must have `.readlines()` method
 
@@ -17,20 +17,35 @@ def parse(stream):
     RPSL.initialize()
     for ln, line in enumerate(stream.readlines()):
         line = line.rstrip()
+        log.info('%3d: %r', ln + 1, line)
         if not line:
             if o:
-                r.append(RPSL(o))
+                try:
+                    t = RPSL(o)
+                except Error as e:
+                    t = None
+                    log.error('%d: %s', ln + 1, e)
+                    if exceptions:
+                        raise
+                r.append(t)
                 o.clear()
         else:
             if RPSL.is_continuation(line):
                 if not o:
                     raise RPSLSyntaxError(ln, line, 'no line to continue')
             else:
-                if not RPSL.is_valid_tagline(line):
-                    raise RPSLSyntaxError(ln, line, 'bad tag line')
+                if not RPSL.is_valid_line(line):
+                    raise RPSLSyntaxError(ln, line, 'bad line format')
             o.append(line)
     if o:
-        r.append(RPSL(o))
+        try:
+            t = RPSL(o)
+        except Error as e:
+            t = None
+            log.error('%d: %s', ln + 1, e)
+            if exceptions:
+                raise
+        r.append(t)
     return r
 
 

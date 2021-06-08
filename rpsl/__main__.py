@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 for arg in sys.argv[1:]:
     if os.path.exists(arg):
         with open(arg) as f:
-            for o in parse(f):
+            for o in parse(f, exceptions=False):
                 print(o, end='\n' + '~' * 80 + '\n')
     else:
         log.warning('No file %r', arg)
