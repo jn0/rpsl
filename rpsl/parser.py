@@ -14,6 +14,7 @@ def parse(stream):
     '''
     r = []
     o = []
+    RPSL.initialize()
     for ln, line in enumerate(stream.readlines()):
         line = line.rstrip()
         if not line:

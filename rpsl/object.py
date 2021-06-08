@@ -3,11 +3,17 @@
 '''
 import logging; log = logging.getLogger(__name__)  # noqa E702
 from .errors import RPSLAttributeError
+from .attribute import load_parsers
 
 
 class RPSL:
     ATTRIBUTE_SIZE = 16
     _PARSERS = {}
+
+    @classmethod
+    def initialize(klass):
+        if not klass._PARSERS:
+            klass._PARSERS.update(load_parsers())
 
     @staticmethod
     def format_attribute(attr, attribute_size=ATTRIBUTE_SIZE):
@@ -44,7 +50,7 @@ class RPSL:
                 entry = self._line
 
     @classmethod
-    def _null_parser(cls, attribute, value):
+    def _null_parser(cls, attribute, value, strict=None, messages=None):
         '''the very basic parser'''
         return attribute, value
 
@@ -57,7 +63,13 @@ class RPSL:
 
     def parse(self, line):
         attribute, value = line.split(':', 1)  # must work
-        return self.get_parser(attribute)(attribute, value.lstrip())
+        messages = []
+        rc = self.get_parser(attribute)(attribute, value.lstrip(),
+                                        strict=self.strict,
+                                        messages=messages)
+        if messages:
+            log.error('line #%d has errors:\n%s', self._ln, '\n'.join(messages))
+        return rc
 
     def __str__(self):
         return '\n'.join(map(self.format_line, self.lines))
