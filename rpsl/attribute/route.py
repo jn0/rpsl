@@ -1,8 +1,5 @@
 #!python3
 '''
-route: 1.2.3.0 - 1.2.3.255
-origin: as123
-
 route: 1.2.3.0/24
 origin: as123
 '''
@@ -17,34 +14,21 @@ def parse(attr, value, strict=False, messages: list = None):
     assert attr == attribute, f'Unexpected {attr!r} in {attribute!r} parser'
 
     ok, message = True, ''
-    if '-' in value:
-        ip1, ip2 = map(str.strip, value.split('-', 1))
-        try:
-            ip1 = IP(ip1)
-        except ValueError as e:
-            ok = False
-            message = str(e)
-        try:
-            ip2 = IP(ip2)
-        except ValueError as e:
-            ok = False
-            message += (message and '; ') + str(e)
-        if ok:
-            value = f'{ip1} - {ip2}'
-    else:
-        try:
-            value = IP(value)
-        except ValueError as e:
-            ok = False
-            message = str(e)
-        if ok:
-            value = f'{value[0]} - {value[-1]}'
+    if '/' not in value:
+        message = f'Bad route value {value!r}'
+        raise RPSLRouteError(None, None, message)
+
+    try:
+        value = IP(value, make_net=not strict)
+    except ValueError as e:
+        ok = False
+        message = str(e)
 
     if message and messages:
         messages.append(message)
     if strict and not ok:
         raise RPSLRouteError(None, None, message)
-    return attr, value
+    return attr, str(value)
 
 
 def validate(obj):
