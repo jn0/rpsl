@@ -1,0 +1,136 @@
+version: 0
+rpsl: # RFC2622
+  reserved-names:
+    - any
+    - as-any
+    - rs-any
+    - peeras
+    - and
+    - or
+    - not
+    - atomic
+    - from
+    - to
+    - at
+    - action
+    - accept
+    - announce
+    - except
+    - refine
+    - networks
+    - into
+    - inbound
+    - outbound
+  reserved-prefix:
+    - as-
+    - rs-
+    - rtrs-
+    - fltr-
+    - prng-
+  types:                    # RFC2622.2
+    - object-name           # [a-z]([a-z0-9_-]*[a-z0-9])?
+    - as-number             # 'AS' number
+    - ipv4-address          # dotted-quad
+    - address-prefix        # <ipv4-address> '/' number
+    - address-prefix-range  # <address-prefix> range-op | <address-prefix-set> range-op
+    - address-prefix-set    # '{' <address-prefix-range> '}'
+    - date                  # YYYYMMDD
+    - email-address         # RFC822
+    - dns-name              # RFC1034
+    - nic-handle            # <object-name>
+    - free-form             # ...
+    - registry-name         # RFC2622.A
+    - list                  # comma-delimited list of <types>
+    - scheme-id             # NONE, MAIL-FROM, PGP-KEY and CRYPT-PW
+    - auth-info             # junk
+    - auth                  # <scheme-id> ' ' <auth-info>
+    - changed               # <email-address> ' ' <date>
+
+  attribute:
+    attrdef: &attr
+      name: null
+      type: free-form
+      optional: true
+      key: false
+      multiple: false
+
+  class:
+    mntner: # RFC2622.3.1
+      - <<: *attr
+        name: mntner
+        type: object-name
+        key: true
+        optional: false
+      - <<: *attr
+        name: descr
+        optional: false
+      - <<: *attr
+        name: auth
+        type: auth
+        optional: false
+        multiple: true
+      - <<: *attr
+        name: upd-to
+        type: email-address
+        optional: false
+        multiple: true
+      - <<: *attr
+        name: mnt-nfy
+        type: email-address
+        multiple: true
+      - <<: *attr
+        name: tech-c
+        type: nic-handle
+        optional: false
+        multiple: true
+      - <<: *attr
+        name: admin-c
+        type: nic-handle
+        multiple: true
+      - <<: *attr
+        name: remarks
+        multiple: true
+      - <<: *attr
+        name: notify
+        type: email-address
+        multiple: true
+      - <<: *attr # type: list of <mntner-name>
+        name: mnt-by
+        optional: false
+        multiple: true
+      - <<: *attr
+        name: changed
+        type: changed
+        optional: false
+        multiple: true
+
+    mntner: # RFC2622.3.2
+      - <<: *attr
+        name: person     
+        optional: false
+      - <<: *attr
+        name: nic-hdl    
+        type: nic-handle
+        optional: false
+        key: true
+      - <<: *attr
+        name: address    
+        optional: false
+        multiple: true
+      - <<: *attr
+        name: phone      
+        x: see description in text 
+        optional: false
+        multiple: true
+      - <<: *attr
+        name: fax-no     
+        x: same as phone           
+        multiple: true
+      - <<: *attr
+        name: e-mail     
+        type: email-address
+        optional: false
+        multiple: true
+
+
+# vim:set ft=yaml ai et ts=2 sts=2 sw=2 cc=80:EOF #
