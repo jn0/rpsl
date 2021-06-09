@@ -34,7 +34,7 @@ def _load():
     _validators.clear()
 
     where = os.path.dirname(__file__)
-    for f in os.listdir(where):
+    for f in sorted(os.listdir(where)):
         name, ext = os.path.splitext(f)
         if ext not in ('.py',) or name.startswith('_'):
             continue
