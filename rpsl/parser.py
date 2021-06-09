@@ -16,6 +16,8 @@ def parse(stream, exceptions=True):
     o = []
     RPSL.initialize()
     for ln, line in enumerate(stream.readlines()):
+        if '#' in line:
+            line = line.split('#', 1)[0]
         line = line.rstrip()
         log.info('%3d: %r', ln + 1, line)
         if not line:
