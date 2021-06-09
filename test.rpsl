@@ -1,0 +1,122 @@
+
+route: 123.1.2.0/24
+origin: as9999
+descr: test3
+
+route: 1.2.3.0/24
+descr: invalid route 1
+
+route: 1.2.3.0/24
+origin: as123
+descr: invalid route 2
+descr: bad line
+
+inetnum: 1.2.3.0 - 1.2.3.255
+netname: my-net
+
+inetnum: 1.2.3.0/24
+netname: my-net
+
+as-set: as-1123
+mbrs-by-ref: ranr-123123-mnt
+
+as-set: as-bad
+mbrs-by-ref: ranr-123123-mnt
+aaa: bbb
+
+route-set: rs-foo
+members: 128.9.0.0/16, 128.9.0.0/24
+
+route-set: rs-bar
+members: 128.7.0.0/16, rs-foo
+
+route-set: rs-bar
+members: 5.0.0.0/8^+, 30.0.0.0/8^24-32, rs-foo^+
+
+filter-set: fltr-foo
+filter: { 5.0.0.0/8, 6.0.0.0/8 }
+
+filter-set: fltr-bar
+filter: (AS1 or fltr-foo) and <AS2>
+
+rtr-set: rtrs-foo
+members: rtr1.isp.net, rtr2.isp.net
+mbrs-by-ref: MNTR-ME
+
+inet-rtr: rtr3.isp.net
+local-as: as1
+ifaddr: 1.1.1.1 masklen 30
+member-of: rtrs-foo
+mnt-by: MNTR-ME
+
+peering-set: prng-foo
+peering: prng-bar
+peering: AS2 at 9.9.9.1
+
+aut-num: AS1
+import: from prng-foo accept { 128.9.0.0/16 }
+as-name: my-as
+
+route:      128.8.0.0/15            
+origin:     AS1                     
+components: {128.8.0.0/15^-}        
+aggr-bndry: AS1 OR AS2              
+aggr-mtd:   outbound AS-ANY         
+
+route:      127.8.0.0/15
+origin:     AS1
+components: {127.8.0.0/15^-}
+aggr-bndry: AS0 OR AS2
+aggr-mtd:   outbound AS-ANY
+
+route:      128.8.0.0/15
+origin:     AS1
+components: {128.8.0.0/15^-}
+aggr-mtd:   outbound AS-ANY
+export-comps: {128.8.8.0/24}
+
+route:      128.8.0.0/15
+origin:     AS1
+components: {128.8.0.0/15^-}
+aggr-mtd:   outbound AS-ANY
+inject:     at 1.1.1.1 action dpa = 100;
+inject:     at 1.1.1.2 action dpa = 110;
+
+route:      128.8.0.0/15
+origin:     AS1
+components: {128.8.0.0/15^-}
+aggr-mtd:   outbound AS-ANY
+inject:     upon HAVE-COMPONENTS {128.8.0.0/16, 128.9.0.0/16}
+holes:      128.8.8.0/24
+
+aut-num: AS3561
+as-name: my-as
+import: from AS3561:AS-PEERS
+        action pref = 10;
+        accept community(3561:90)
+import: from AS3561:AS-PEERS
+        action pref = 20;
+        accept community(3561:80)
+import: from AS3561:AS-PEERS
+        action pref = 20;
+        accept community(3561:70)
+import: from AS3561:AS-PEERS
+        action pref = 0;
+        accept ANY
+
+
+inet-rtr: Amsterdam.ripe.net
+alias:    amsterdam1.ripe.net
+local-as: AS3333
+ifaddr:   192.87.45.190 masklen 24
+ifaddr:   192.87.4.28   masklen 24
+ifaddr:   193.0.0.222   masklen 27
+ifaddr:   193.0.0.158   masklen 27
+peer:     BGP4 192.87.45.195 asno(AS3334), flap_damp()
+
+
+
+
+
+
+
