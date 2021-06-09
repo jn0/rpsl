@@ -46,6 +46,7 @@ rpsl: # RFC2622
     - auth                  # <scheme-id> ' ' <auth-info>
     - changed               # <email-address> ' ' <date>
     - phone                 # +<country-code> <city> <subscriber> [ext. <extension>]
+    - date-time             # UTC
 
   attribute:
     attrdef: &attr
@@ -362,5 +363,126 @@ rpsl: # RFC2622
         name: member-of  
         type: list:rtr-set-names
         multiple: true
+
+    inet6num: # RIPE
+      - <<: *attr
+        name: descr
+      - <<: *attr
+        name: inet6num
+        type: null
+        optional: false
+        key: true
+      - <<: *attr
+        name: netname
+        type: object-name
+        optional: false
+      - <<: *attr
+        name: country
+        multiple: true
+      - <<: *attr
+        name: org
+      - <<: *attr
+        name: admin-c
+        multiple: true
+      - <<: *attr
+        name: tech-c
+        multiple: true
+      - <<: *attr
+        name: rev-srv
+        multiple: true
+      - <<: *attr
+        name: status
+        optional: false
+      - <<: *attr
+        name: remarks
+        multiple: true
+      - <<: *attr
+        name: notify
+        multiple: true
+      - <<: *attr
+        name: mnt-by
+        multiple: true
+        optional: false
+      - <<: *attr
+        name: mnt-lower
+        multiple: true
+      - <<: *attr
+        name: mnt-routes
+        multiple: true
+      - <<: *attr
+        name: changed
+        type: changed
+        multiple: true
+        optional: false
+      - <<: *attr
+        name: created
+        type: date-time
+      - <<: *attr
+        name: last-modified
+        type: date-time
+      - <<: *attr
+        name: source
+        type: object-name
+        optional: false
+
+    inetnum: # RIPE
+      - <<: *attr
+        name: descr
+      - <<: *attr
+        name: inetnum
+        type: null
+        optional: false
+        key: true
+      - <<: *attr
+        name: netname
+        type: object-name
+        optional: false
+      - <<: *attr
+        name: country
+        multiple: true
+      - <<: *attr
+        name: org
+      - <<: *attr
+        name: admin-c
+        multiple: true
+      - <<: *attr
+        name: tech-c
+        multiple: true
+      - <<: *attr
+        name: rev-srv
+        multiple: true
+      - <<: *attr
+        name: status
+        optional: false
+      - <<: *attr
+        name: remarks
+        multiple: true
+      - <<: *attr
+        name: notify
+        multiple: true
+      - <<: *attr
+        name: mnt-by
+        multiple: true
+        optional: false
+      - <<: *attr
+        name: mnt-lower
+        multiple: true
+      - <<: *attr
+        name: mnt-routes
+        multiple: true
+      - <<: *attr
+        name: changed
+        multiple: true
+        optional: false
+      - <<: *attr
+        name: created
+        type: date-time
+      - <<: *attr
+        name: last-modified
+        type: date-time
+      - <<: *attr
+        name: source
+        type: object-name
+        optional: false
 
 # vim:set ft=yaml ai et ts=2 sts=2 sw=2 cc=80:EOF #

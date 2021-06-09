@@ -13,9 +13,17 @@ descr: bad line
 
 inetnum: 1.2.3.0 - 1.2.3.255
 netname: my-net
+status: legacy
+source: RIPE
+mnt-by: mnt-some-ripe
+changed: 12345678 a@b.c
 
 inetnum: 1.2.3.0/24
 netname: my-net
+changed: 12345678 a@b.c
+status: legacy
+source: RIPE
+mnt-by: mnt-some-ripe
 
 as-set: as-1123
 mbrs-by-ref: ranr-123123-mnt
