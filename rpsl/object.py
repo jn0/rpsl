@@ -4,6 +4,11 @@
 import logging; log = logging.getLogger(__name__)  # noqa E702
 from .errors import RPSLAttributeError
 from .attribute import load_parsers, load_validators
+from .config import config
+
+
+def match(value, typespec):
+    return True
 
 
 class RPSL:
@@ -45,6 +50,8 @@ class RPSL:
         self.object_class = None                # object class
         self.pk = None                          # primary lookup key
 
+        self.cf = config()  # ref to global config
+
         self.parse_object()
 
         validator = RPSL._VALIDATORS.get(self.object_class)
@@ -65,27 +72,84 @@ class RPSL:
         return RPSL._PARSERS.get(attribute, self._null_parser)
 
     def parse_object(self):
+        seen = {}
+        spec = None
+        types = {}
+        tags = set()
+
         entry = self._ln = self._line = None
         for self._ln, self._line in enumerate(self.lines):
             if self._ln == 0:
-                self.object_class, self.pk = self._line.split(':', 1)
+                self.object_class, self.pk = \
+                    list(map(str.strip, self._line.split(':', 1)))
+                spec = self.cf.get('rpsl', {}) \
+                              .get('class', {}) \
+                              .get(self.object_class)
+                types = {entry['name']: entry['type'] for entry in spec} \
+                    if spec else {}
+                tags = {entry['name'] for entry in spec} if spec else set()
             if self.is_continuation(self._line):
                 entry += self._line[1:]
             else:
                 if entry:
-                    self.entries.append(self.parse_entry(entry))
+                    self.entries.append(self.parse_entry(entry, types))
+                    tag = self.entries[-1][0]
+                    seen[tag] = seen.get(tag, 0) + 1
                 entry = self._line
         else:
             if entry:
-                self.entries.append(self.parse_entry(entry))
+                self.entries.append(self.parse_entry(entry, types))
+                tag = self.entries[-1][0]
+                seen[tag] = seen.get(tag, 0) + 1
         self._ln = self._line = None
 
-    def parse_entry(self, line):
+        if not spec:
+            log.warning('No spec for %r', self.object_class)
+            return
+
+        if not self.object_class:
+            self.object_class = 'UnKnOwN'
+
+        mandatory = {entry['name']
+                     for entry in spec
+                     if not entry['optional']}
+        lost = [tag for tag in mandatory if tag not in seen]
+        if lost:
+            raise RPSLAttributeError(None, None,
+                                     f'{self.object_class}'
+                                     f' lost {", ".join(lost)}')
+        log.debug('Mandatory fields ok for %r %r', self.object_class, self.pk)
+
+        extras = {e[0] for e in self.entries if e[0] not in tags}
+        if extras:
+            raise RPSLAttributeError(None, None,
+                                     f'{self.object_class}'
+                                     f' extra {", ".join(extras)}')
+
+        multiple = {entry['name'] for entry in spec if entry['multiple']}
+        repeated = [tag for tag in tags
+                    if tag not in multiple and seen.get(tag, 0) > 1]
+        if repeated:
+            raise RPSLAttributeError(None, None,
+                                     f'{self.object_class} repeated single'
+                                     f' fileds {", ".join(repeated)}')
+
+    def parse_entry(self, line, types):
         attribute, value = line.split(':', 1)  # must work
+        value = value.lstrip()
         messages = []
+        if attribute in types and types[attribute]:
+            spec = types[attribute]
+            is_list = spec.startswith('list:')
+            if is_list:
+                spec = spec.split(':', 1)[-1]
+            spec = spec.split('|')
+            for val in map(str.strip, value.split(',')):
+                if not any(match(val, t) for t in spec):
+                    messages.append(f'{val!r} does not match {spec!r}')
+            pass  # TODO use types[attribute] to validate too
         parser = self.get_parser(attribute)
-        rc = parser(attribute, value.lstrip(),
-                    strict=self.strict, messages=messages)
+        rc = parser(attribute, value, strict=self.strict, messages=messages)
         if messages:
             log.error('line #%d has errors:\n%s',
                       self._ln, '\n'.join(messages))
