@@ -1,16 +1,16 @@
 #!python3
 '''
-inetnum: 1.2.3.0 - 1.2.3.255
+inet6num: 1.2.3.0 - 1.2.3.255
 netname: net-1
 
-inetnum: 1.2.3.0/24
+inet6num: 1.2.3.0/24
 netname: net-1
 '''
 import logging; log = logging.getLogger(__name__)  # noqa E702
 from IPy import IP
 from ..errors import RPSLInetnumError, RPSLInvalidInetnumError
 
-attribute = 'inetnum'
+attribute = 'inet6num'
 
 
 def parse(attr, value, strict=False, messages: list = None):
@@ -20,12 +20,12 @@ def parse(attr, value, strict=False, messages: list = None):
     if '-' in value:
         ip1, ip2 = map(str.strip, value.split('-', 1))
         try:
-            ip1 = IP(ip1, ipversion=4)
+            ip1 = IP(ip1, ipversion=6)
         except ValueError as e:
             ok = False
             message = str(e)
         try:
-            ip2 = IP(ip2, ipversion=4)
+            ip2 = IP(ip2, ipversion=6)
         except ValueError as e:
             ok = False
             message += (message and '; ') + str(e)
@@ -33,7 +33,7 @@ def parse(attr, value, strict=False, messages: list = None):
             value = f'{ip1} - {ip2}'
     else:
         try:
-            value = IP(value, ipversion=4)
+            value = IP(value, ipversion=6)
         except ValueError as e:
             ok = False
             message = str(e)
@@ -53,7 +53,7 @@ def validate(obj):
         if i == 0:  # first line
             if attr != attribute:
                 raise RPSLInvalidInetnumError(None, None,
-                                            'Object is not a inetnum')
+                                            'Object is not a inet6num')
             obj.pk = value.strip().upper()
         else:
             if attr == 'netname':

@@ -1,13 +1,13 @@
 #!python3
 '''
-route: 1.2.3.0/24
+route6: 1.2.3.0/24
 origin: as123
 '''
 import logging; log = logging.getLogger(__name__)  # noqa E702
 from IPy import IP
 from ..errors import RPSLRouteError, RPSLInvalidRouteError
 
-attribute = 'route'
+attribute = 'route6'
 
 
 def parse(attr, value, strict=False, messages: list = None):
@@ -15,11 +15,11 @@ def parse(attr, value, strict=False, messages: list = None):
 
     ok, message = True, ''
     if '/' not in value:
-        message = f'Bad route value {value!r}'
+        message = f'Bad route6 value {value!r}'
         raise RPSLRouteError(None, None, message)
 
     try:
-        value = IP(value, ipversion=4, make_net=not strict)
+        value = IP(value, ipversion=6, make_net=not strict)
     except ValueError as e:
         ok = False
         message = str(e)
@@ -37,7 +37,7 @@ def validate(obj):
         if i == 0:  # first line
             if attr != attribute:
                 raise RPSLInvalidRouteError(None, None,
-                                            'Object is not a route')
+                                            'Object is not a route6')
             obj.pk = value.strip().upper()
         else:
             if attr == 'origin':
