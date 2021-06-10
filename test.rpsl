@@ -15,7 +15,7 @@ inetnum: 1.2.3.0 - 1.2.3.255
 netname: my-net
 status: legacy
 source: RIPE
-mnt-by: mnt-some-ripe
+mnt-by: mnt-some1-ripe, mnt-some2-ripe, mnt-some3-ripe
 changed: 12345678 a@b.c
 
 inetnum: 1.2.3.0/24
