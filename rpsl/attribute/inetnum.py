@@ -53,7 +53,7 @@ def validate(obj):
         if i == 0:  # first line
             if attr != attribute:
                 raise RPSLInvalidInetnumError(None, None,
-                                            'Object is not a inetnum')
+                                              'Object is not a inetnum')
             obj.pk = value.strip().upper()
         else:
             if attr == 'netname':
