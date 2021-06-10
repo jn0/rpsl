@@ -161,13 +161,14 @@ class TYPES:
 
 
 def match_type(config, value, typespec):
+    result = True
     # types = config.get('rpsl', {}).get('types')
 
     if hasattr(TYPES, typespec.replace('-', '_')):
         chk = getattr(TYPES, typespec.replace('-', '_'))
-        return chk(value)
-
-    return True
+        result = chk(value)
+    log.debug('match_type(value=%r type=%r): %r', value, typespec, result)
+    return result
 
 
 # vim:set ft=python ai et ts=4 sts=4 sw=4 cc=80:EOF #
