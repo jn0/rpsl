@@ -38,7 +38,11 @@ class RPSL:
         if RPSL.is_valid_line(line):
             attribute, value = line.split(':', 1)
             return RPSL.format_attribute(attribute) + value.lstrip()
-        return line
+        if RPSL.is_continuation(line):
+            if line.startswith('+'):
+                return line.rstrip()  # as is
+            return ' '.ljust(RPSL.ATTRIBUTE_SIZE) + line.strip()
+        return '?' + line
 
     def __init__(self, lines: list, strict=False):
         self.strict = strict                    # flag
