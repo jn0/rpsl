@@ -1,0 +1,6 @@
+version: 0
+# RTFM: https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig
+# logger names follow their __name__ value (except for __main__ which is __package__)
+# one may use "include: []" here too...
+logging: {}
+# vim:set ft=yaml ai et ts=2 sts=2 sw=2 cc=80:EOF #
