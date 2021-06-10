@@ -145,10 +145,14 @@ class RPSL:
             if is_list:
                 spec = spec.split(':', 1)[-1]
             spec = spec.split('|')
-            for val in map(str.strip, value.split(',')):
-                if not any(match_type(self.cf, val, t) for t in spec):
-                    messages.append(f'{val!r} does not match {spec!r}')
-            pass  # TODO use types[attribute] to validate too
+            if is_list:
+                for val in map(str.strip, value.split(',')):
+                    log.debug('val=%r t=LIST:%r', val, spec)
+                    if not any(match_type(self.cf, val, t) for t in spec):
+                        messages.append(f'{val!r} does not match list:{spec!r}')
+            else:
+                if not any(match_type(self.cf, value.strip(), t) for t in spec):
+                        messages.append(f'{value!r} does not match {spec!r}')
         parser = self.get_parser(attribute)
         rc = parser(attribute, value, strict=self.strict, messages=messages)
         if messages:
