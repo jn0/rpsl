@@ -49,440 +49,375 @@ rpsl: # RFC2622
     - date-time             # 2020-12-25T16:16:09Z
 
   attribute:
-    attrdef: &attr
+    attrdef0: &attr
       name: null
       type: free-form
       optional: true
       key: false
       multiple: false
+    attrdef1: &descr
+      <<: *attr
+      name: descr
+    attrdef2: &mnt-by
+      <<: *attr
+      name: mnt-by
+      type: list:nic-handle
+      multiple: true
+    attrdef3: &tech-c
+      <<: *attr
+      name: tech-c
+      type: nic-handle
+      multiple: true
+    attrdef4: &admin-c
+      <<: *attr
+      name: admin-c
+      type: nic-handle
+      multiple: true
+    attrdef5: &remarks
+      <<: *attr
+      name: remarks
+      multiple: true
+    attrdef6: &changed
+      <<: *attr
+      name: changed
+      type: changed
+      optional: false
+      multiple: true
+    attrdef7: &nic-hdl
+      <<: *attr
+      name: nic-hdl
+      type: nic-handle
+      optional: false
+      key: true
+    attrdef8: &phone
+      <<: *attr
+      name: phone
+      type: phone
+      multiple: true
+    attrdef9: &e-mail
+      <<: *attr
+      name: e-mail
+      type: email-address
+      multiple: true
+    attrdef10: &mbrs-by-ref
+      <<: *attr
+      name: mbrs-by-ref
+      type: list:mntner-names
+      multiple: true
+    attrdef11: &members
+      <<: *attr
+      name: members
+      type: list:as-numbers|as-set-names
+      multiple: true
+    attrdef12: &created
+      <<: *attr
+      name: created
+      type: date-time
+    attrdef13: &last-modified
+      <<: *attr
+      name: last-modified
+      type: date-time
+    attrdef14: &source
+      <<: *attr
+      name: source
+      type: object-name
+      optional: false
+    attrdef15: &obj-name
+      <<: *attr
+      name: null
+      type: object-name
+      optional: false
+    attrdef16: &member-of
+      <<: *attr
+      name: member-of
+      type: list:as-set-names
+      multiple: true
+    attrdef17: &impex # import, export, default, mp- versions...
+      <<: *attr
+      name: null
+      type: null # to be defined
+      multiple: true
 
   class:
     mntner: # RFC2622.3.1
-      - <<: *attr
-        name: descr
-      - <<: *attr
+      - <<: *obj-name
         name: mntner
         type: object-name
         key: true
-        optional: false
-      - <<: *attr
-        name: descr
+      - <<: *descr
         optional: false
       - <<: *attr
         name: auth
         type: auth
         optional: false
         multiple: true
-      - <<: *attr
+      - <<: *e-mail
         name: upd-to
-        type: email-address
         optional: false
-        multiple: true
-      - <<: *attr
+      - <<: *e-mail
         name: mnt-nfy
-        type: email-address
-        multiple: true
-      - <<: *attr
-        name: tech-c
-        type: nic-handle
+      - <<: *tech-c
         optional: false
-        multiple: true
-      - <<: *attr
-        name: admin-c
-        type: nic-handle
-        multiple: true
-      - <<: *attr
-        name: remarks
-        multiple: true
-      - <<: *attr
+      - <<: *admin-c
+      - <<: *remarks
+      - <<: *e-mail
         name: notify
-        type: email-address
-        multiple: true
-      - <<: *attr # type: list of <mntner-name>
-        name: mnt-by
+      - <<: *mnt-by
         optional: false
-        multiple: true
-      - <<: *attr
-        name: changed
-        type: changed
-        optional: false
-        multiple: true
+      - <<: *changed
 
     person: # RFC2622.3.2
       - <<: *attr
-        name: descr
-      - <<: *attr
-        name: person     
+        name: person
         optional: false
+      - <<: *descr
+      - <<: *nic-hdl
       - <<: *attr
-        name: nic-hdl    
-        type: nic-handle
-        optional: false
-        key: true
-      - <<: *attr
-        name: address    
+        name: address
         optional: false
         multiple: true
-      - <<: *attr
-        name: phone      
-        type: phone
+      - <<: *phone
         optional: false
-        multiple: true
-      - <<: *attr
-        name: fax-no     
-        type: phone
-        multiple: true
-      - <<: *attr
-        name: e-mail     
-        type: email-address
+      - <<: *phone
+        name: fax-no
+      - <<: *e-mail
         optional: false
-        multiple: true
 
     role: # RFC 2622.3.3
       - <<: *attr
-        name: descr
-      - <<: *attr
-        name: role       
+        name: role
         optional: false
+      - <<: *descr
+      - <<: *nic-hdl
       - <<: *attr
-        name: nic-hdl    
-        type: nic-handle
-        optional: false
-      - <<: *attr
-        name: trouble    
+        name: trouble
         multiple: true
       - <<: *attr
-        name: address    
+        name: address
         optional: false
         multiple: true
-      - <<: *attr
-        name: phone      
-        type: phone
+      - <<: *phone
         optional: false
-        multiple: true
-      - <<: *attr
-        name: fax-no     
-        type: phone            
-        multiple: true
-      - <<: *attr
-        name: e-mail     
-        type: email-address
+      - <<: *phone
+        name: fax-no
+      - <<: *e-mail
         optional: false
-        multiple: true
 
     route: # RFC 2622 4
       - <<: *attr
-        name: descr
-      - <<: *attr
-        name: route         
+        name: route
         type: address-prefix
         optional: false
         key: true
+      - <<: *descr
       - <<: *attr
-        name: origin        
+        name: origin
         type: as-number
         optional: false
         key: true
-      - <<: *attr
-        name: member-of     
+      - <<: *member-of
         type: list:route-set-names
-        multiple: true
         # see Section 5
       - <<: *attr
-        name: inject        
+        name: inject
         type: null # see Section 8
         multiple: true
       - <<: *attr
-        name: components    
+        name: components
         type: null # see Section 8
       - <<: *attr
-        name: aggr-bndry    
+        name: aggr-bndry
         type: null # see Section 8
       - <<: *attr
-        name: aggr-mtd      
+        name: aggr-mtd
         type: null # see Section 8
       - <<: *attr
-        name: export-comps  
+        name: export-comps
         type: null # see Section 8
       - <<: *attr
-        name: holes         
+        name: holes
         type: null # see Section 8
         multiple: true
 
     as-set: # RFC 2622 5.1
-      - <<: *attr
-        name: descr
-      - <<: *attr
-        name: as-set       
-        type: object-name
-        optional: false
+      - <<: *obj-name
+        name: as-set
         key: true
-      - <<: *attr
-        name: members      
-        type: list:as-numbers|as-set-names
-        multiple: true
-      - <<: *attr
-        name: mbrs-by-ref  
-        type: list:mntner-names
-        multiple: true
+      - <<: *descr
+      - <<: *members
+      - <<: *mbrs-by-ref
 
     route-set: # RFC 2622 5.2
-      - <<: *attr
-        name: descr
-      - <<: *attr
-        name: route-set    
-        type: object-name
-        optional: false
+      - <<: *obj-name
+        name: route-set
         key: true
-      - <<: *attr
-        name: members      
+      - <<: *descr
+      - <<: *members
         type: list:address-prefix-range|route-set-name|route-set-name+range-operator
-        multiple: true
-      - <<: *attr
-        name: mbrs-by-ref  
-        type: list:mntner-names
-        multiple: true
+      - <<: *mbrs-by-ref
 
     filter-set: # RFC 2622 5.4
-      - <<: *attr
-        name: descr
-      - <<: *attr
-        name: filter-set  
-        type: object-name
-        optional: false
+      - <<: *obj-name
+        name: filter-set
         key: true
+      - <<: *descr
       - <<: *attr
-        name: filter      
+        name: filter
         type: filter
         optional: false
 
     rtr-set: # RFC 2622 5.5
-      - <<: *attr
-        name: descr
-      - <<: *attr
-        name: rtr-set      
+      - <<: *obj-name
+        name: rtr-set
         type: object-name
-        optional: false
         key: true
-      - <<: *attr
-        name: members      
+      - <<: *descr
+      - <<: *members
         type: list:inet-rtr-names|rtr-set-names|ipv4_addresses
-        multiple: true
-      - <<: *attr
-        name: mbrs-by-ref  
-        type: list:mntner-names
-        multiple: true
+      - <<: *mbrs-by-ref
 
     peering-set: # RFC 2622 5.6
-      - <<: *attr
-        name: descr
-      - <<: *attr
-        name: peering-set  
-        type: object-name
-        optional: false
+      - <<: *obj-name
+        name: peering-set
         key: true
+      - <<: *descr
       - <<: *attr
-        name: peering      
+        name: peering
         type: peering
         optional: false
         multiple: true
 
     aut-num: # RFC 2622 6
-      - <<: *attr
-        name: descr
-      - <<: *attr
-        name: aut-num    
+      - <<: *obj-name
+        name: aut-num
         type: as-number
-        optional: false
         key: true
-      - <<: *attr
-        name: as-name    
-        type: object-name
-        optional: false
-      - <<: *attr
-        name: member-of  
-        type: list:as-set-names
-        multiple: true
-      - <<: *attr
-        name: import     
-        x: see.Section.6.1        
-        multiple: true
-      - <<: *attr
-        name: export     
-        x: see Section 6.2        
-        multiple: true
-      - <<: *attr
-        name: default    
-        x: see.Section.6.5        
-        multiple: true
+      - <<: *obj-name
+        name: as-name
+      - <<: *descr
+      - <<: *member-of
+      - <<: *impex
+        name: import     # see.Section.6.1
+      - <<: *impex
+        name: export     # see Section 6.2
+      - <<: *impex
+        name: default    # see.Section.6.5
 
     dictionary: # RFC 2622 6
-      - <<: *attr
-        name: descr
-      - <<: *attr
-        name: dictionary    
-        type: object-name
-        optional: false
+      - <<: *obj-name
+        name: dictionary
         key: true
+      - <<: *descr
       - <<: *attr
-        name: rp-attribute  
+        name: rp-attribute
         multiple: true
       - <<: *attr
-        name: typedef       
+        name: typedef
         multiple: true
       - <<: *attr
-        name: protocol      
+        name: protocol
         multiple: true
 
     inet-rtr: # RFC 2622 9
-      - <<: *attr
-        name: descr
-      - <<: *attr
-        name: inet-rtr   
+      - <<: *obj-name
+        name: inet-rtr
         type: dns-name
-        optional: false
         key: true
+      - <<: *descr
       - <<: *attr
-        name: alias      
+        name: alias
         type: dns-name
         multiple: true
       - <<: *attr
-        name: local-as   
+        name: local-as
         type: as-number
         optional: false
       - <<: *attr
-        name: ifaddr     
+        name: ifaddr
         type: null
         optional: false
         multiple: true
       - <<: *attr
-        name: peer       
+        name: peer
         type: null
         multiple: true
-      - <<: *attr
-        name: member-of  
+      - <<: *member-of
         type: list:rtr-set-names
-        multiple: true
 
     inet6num: # RIPE
-      - <<: *attr
-        name: descr
-      - <<: *attr
+      - <<: *obj-name
         name: inet6num
         type: null
-        optional: false
         key: true
-      - <<: *attr
+      - <<: *obj-name
         name: netname
-        type: object-name
-        optional: false
+      - <<: *descr
       - <<: *attr
         name: country
         multiple: true
+        # optional: false
       - <<: *attr
         name: org
-      - <<: *attr
-        name: admin-c
-        multiple: true
-      - <<: *attr
-        name: tech-c
-        multiple: true
+        # optional: false
+      - <<: *admin-c
+      - <<: *tech-c
       - <<: *attr
         name: rev-srv
         multiple: true
       - <<: *attr
         name: status
         optional: false
-      - <<: *attr
-        name: remarks
-        multiple: true
+      - <<: *remarks
       - <<: *attr
         name: notify
         multiple: true
-      - <<: *attr
-        name: mnt-by
-        multiple: true
+      - <<: *mnt-by
         optional: false
-      - <<: *attr
+      - <<: *mnt-by
         name: mnt-lower
-        multiple: true
-      - <<: *attr
+      - <<: *mnt-by
         name: mnt-routes
-        multiple: true
-      - <<: *attr
-        name: changed
-        type: changed
-        multiple: true
-        optional: false
-      - <<: *attr
-        name: created
-        type: date-time
-      - <<: *attr
-        name: last-modified
-        type: date-time
-      - <<: *attr
-        name: source
-        type: object-name
-        optional: false
+      - <<: *changed
+      - <<: *created
+      - <<: *last-modified
+      - <<: *source
 
     inetnum: # RIPE
-      - <<: *attr
-        name: descr
-      - <<: *attr
+      - <<: *obj-name
         name: inetnum
         type: null
-        optional: false
         key: true
-      - <<: *attr
+      - <<: *obj-name
         name: netname
-        type: object-name
-        optional: false
+      - <<: *descr
       - <<: *attr
         name: country
         multiple: true
+        # optional: false
       - <<: *attr
         name: org
-      - <<: *attr
-        name: admin-c
-        multiple: true
-      - <<: *attr
-        name: tech-c
-        multiple: true
+        # optional: false
+      - <<: *admin-c
+      - <<: *tech-c
       - <<: *attr
         name: rev-srv
         multiple: true
       - <<: *attr
         name: status
         optional: false
-      - <<: *attr
-        name: remarks
-        multiple: true
+      - <<: *remarks
       - <<: *attr
         name: notify
         multiple: true
-      - <<: *attr
-        name: mnt-by
-        multiple: true
+      - <<: *mnt-by
         optional: false
-      - <<: *attr
+      - <<: *mnt-by
         name: mnt-lower
-        multiple: true
-      - <<: *attr
+      - <<: *mnt-by
         name: mnt-routes
-        multiple: true
-      - <<: *attr
-        name: changed
-        multiple: true
-        optional: false
-      - <<: *attr
-        name: created
-        type: date-time
-      - <<: *attr
-        name: last-modified
-        type: date-time
-      - <<: *attr
-        name: source
-        type: object-name
-        optional: false
+      - <<: *changed
+      - <<: *created
+      - <<: *last-modified
+      - <<: *source
 
 # vim:set ft=yaml ai et ts=2 sts=2 sw=2 cc=80:EOF #
