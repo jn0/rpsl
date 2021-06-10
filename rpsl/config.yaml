@@ -46,7 +46,7 @@ rpsl: # RFC2622
     - auth                  # <scheme-id> ' ' <auth-info>
     - changed               # <email-address> ' ' <date>
     - phone                 # +<country-code> <city> <subscriber> [ext. <extension>]
-    - date-time             # UTC
+    - date-time             # 2020-12-25T16:16:09Z
 
   attribute:
     attrdef: &attr

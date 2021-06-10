@@ -5,10 +5,7 @@ import logging; log = logging.getLogger(__name__)  # noqa E702
 from .errors import RPSLAttributeError
 from .attribute import load_parsers, load_validators
 from .config import config
-
-
-def match(value, typespec):
-    return True
+from .types import match_type
 
 
 class RPSL:
@@ -145,7 +142,7 @@ class RPSL:
                 spec = spec.split(':', 1)[-1]
             spec = spec.split('|')
             for val in map(str.strip, value.split(',')):
-                if not any(match(val, t) for t in spec):
+                if not any(match_type(self.cf, val, t) for t in spec):
                     messages.append(f'{val!r} does not match {spec!r}')
             pass  # TODO use types[attribute] to validate too
         parser = self.get_parser(attribute)
